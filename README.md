@@ -1,7 +1,7 @@
-RESTful service Symfony 3.2.2
+RESTful service on Symfony 3.2.2
 =========
 
-The Symfony 3.2 RESTApi.
+Deployment:
  
  - Run composer.
  
