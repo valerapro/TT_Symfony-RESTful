@@ -1,4 +1,4 @@
-RESTful service on Symfony 3.2.2
+RESTful service on Symfony 3.2
 =========
 
 Deployment:
