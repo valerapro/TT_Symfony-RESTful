@@ -1,4 +1,4 @@
-symf-rest
+RESTful service Symfony 3.2.2
 =========
 
 The Symfony 3.2 RESTApi.
