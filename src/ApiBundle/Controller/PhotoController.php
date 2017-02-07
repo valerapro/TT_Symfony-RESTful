@@ -120,6 +120,7 @@ class PhotoController extends FOSRestController implements ClassResourceInterfac
             'status' => $statusCode,
             'message' => $message,
             'photo' => $photo,
+            'id' => $photo->getId(),
         ], $statusCode);
     }
 
