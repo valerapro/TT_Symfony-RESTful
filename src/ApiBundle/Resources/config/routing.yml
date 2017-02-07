@@ -1,0 +1,11 @@
+tag:
+    type: rest
+    resource: ApiBundle\Controller\TagController
+    prefix: /v1
+    name_prefix: api_v1_0
+
+photo:
+    type: rest
+    resource: ApiBundle\Controller\PhotoController
+    prefix: /v1
+    name_prefix: api_v1_

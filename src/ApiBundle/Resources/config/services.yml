@@ -1,0 +1,12 @@
+services:
+#    api.example:
+#        class: ApiBundle\Example
+#        arguments: ["@service_id", "plain_value", "%parameter%"]
+
+    files_manager:
+        class: ApiBundle\Service\FilesManager
+        arguments: ["%upload_file_dir%"]
+
+    tags_manager:
+        class: ApiBundle\Service\TagsManager
+        arguments: ["@doctrine.orm.entity_manager"]
