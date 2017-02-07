@@ -19,3 +19,9 @@ Deployment:
  
  $ php bin/console doc:mig:mig
  
+ - Testing API methods
+ 
+ $ phpunit tests/ApiBundle/Controller/TagControllerTest.php
+ 
+ $ phpunit tests/ApiBundle/Controller/PhotoControllerTest.php
+ 

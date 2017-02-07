@@ -120,7 +120,8 @@ class TagController extends FOSRestController implements ClassResourceInterface
         return $this->view([
             'status' => Response::HTTP_OK,
             'message' => 'Success add tag',
-            'tag' => $newTitle
+            'tag' => $newTitle,
+            'id' => $tag->getId()
         ], Response::HTTP_OK);
     }
 
