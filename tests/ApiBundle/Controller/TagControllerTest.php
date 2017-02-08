@@ -33,6 +33,31 @@ class TagControllerTest extends WebTestCase
     }
 
     /**
+     * Delete tag
+     *
+     * @param $resultRequest
+     */
+    public function delTempTag($resultRequest){
+        $resultRequestJson = json_decode($resultRequest, true);
+        $clientPrep = static::createClient();
+        $crawlerPred = $clientPrep->request('DELETE', '/api/v1/tags/' . $resultRequestJson['id']);
+    }
+
+    /**
+     * Create temp tag
+     *
+     * @return integer
+     */
+    public function createTempTag()
+    {
+        $clientPrep = static::createClient();
+        $crawlerPred = $clientPrep->request('POST', '/api/v1/tags', ['title' => 'Test_' . rand()]);
+        $resultRequest = $clientPrep->getResponse()->getContent();
+        $resultRequestJson = json_decode($resultRequest, true);
+
+        return $resultRequestJson['id'];
+    }
+    /**
      * GET /api/v1/tags
      * Info: get all tags
      */
@@ -54,15 +79,10 @@ class TagControllerTest extends WebTestCase
         $crawler = $client->request('POST', '/api/v1/tags', ['title' => 'Test_'.rand()]);
 
         $this->basicRulesTest($client, $crawler);
-
         /**
-         * Delete new tag
+         * Delete temp tag
          */
-        $resultRequest = $client->getResponse()->getContent();
-        $resultRequestJson = json_decode($resultRequest, true);
-        $clientPrep = static::createClient();
-        $crawlerPred = $clientPrep->request('DELETE', '/api/v1/tags/' . $resultRequestJson['id']);
-
+        $this->delTempTag($client->getResponse()->getContent());
     }
 
     /**
@@ -74,22 +94,20 @@ class TagControllerTest extends WebTestCase
         /**
          * Create temp tag
          */
-        $clientPrep = static::createClient();
-        $crawlerPred = $clientPrep->request('POST', '/api/v1/tags', ['title' => 'Test_'.rand()]);
-        $resultRequest = $clientPrep->getResponse()->getContent();
-        $resultRequestJson = json_decode($resultRequest, true);
+        $tagId = $this->createTempTag();
         /**
          * Testing
          */
         $client = static::createClient();
-        $crawler = $client->request('GET', '/api/v1/tags/' . $resultRequestJson['id']);
+        $crawler = $client->request('GET', '/api/v1/tags/' . $tagId);
 
         $this->basicRulesTest($client, $crawler);
 
         /**
          * Delete new tag
          */
-        $clientPrep->request('DELETE', '/api/v1/tags/' . $resultRequestJson['id']);
+        $clientPrep = static::createClient();
+        $clientPrep->request('DELETE', '/api/v1/tags/' . $tagId);
     }
 
     /**
@@ -101,15 +119,12 @@ class TagControllerTest extends WebTestCase
         /**
          * Create temp tag
          */
-        $clientPrep = static::createClient();
-        $crawlerPred = $clientPrep->request('POST', '/api/v1/tags', ['title' => 'Test_'.rand()]);
-        $resultRequest = $clientPrep->getResponse()->getContent();
-        $resultRequestJson = json_decode($resultRequest, true);
+        $tagId = $this->createTempTag();
         /**
          * Testing
          */
         $client = static::createClient();
-        $url = '/api/v1/tags/' . $resultRequestJson['id'] . '/titles/' . 'Test_'.rand();
+        $url = '/api/v1/tags/' . $tagId . '/titles/' . 'Test_'.rand();
         $crawler = $client->request('PUT', $url);
 
         $this->basicRulesTest($client, $crawler);
@@ -117,7 +132,8 @@ class TagControllerTest extends WebTestCase
         /**
          * Delete temp tag
          */
-        $clientPrep->request('DELETE', '/api/v1/tags/' . $resultRequestJson['id']);
+        $clientPrep = static::createClient();
+        $clientPrep->request('DELETE', '/api/v1/tags/' . $tagId);
     }
 
     /**
@@ -129,21 +145,19 @@ class TagControllerTest extends WebTestCase
         /**
          * Create temp tag
          */
-        $clientPrep = static::createClient();
-        $crawlerPred = $clientPrep->request('POST', '/api/v1/tags', ['title' => 'Test_'.rand()]);
-        $resultRequest = $clientPrep->getResponse()->getContent();
-        $resultRequestJson = json_decode($resultRequest, true);
+        $tagId = $this->createTempTag();
         /**
          * Testing
          */
         $client = static::createClient();
-        $crawler = $client->request('GET', '/api/v1/tags/' . $resultRequestJson['id'] . '/photos');
+        $crawler = $client->request('GET', '/api/v1/tags/' . $tagId . '/photos');
 
         $this->basicRulesTest($client, $crawler);
         /**
          * Delete temp tag
          */
-        $clientPrep->request('DELETE', '/api/v1/tags/' . $resultRequestJson['id']);
+        $clientPrep = static::createClient();
+        $clientPrep->request('DELETE', '/api/v1/tags/' . $tagId);
     }
 
     /**
@@ -155,15 +169,12 @@ class TagControllerTest extends WebTestCase
         /**
          * Create temp tag
          */
-        $clientPrep = static::createClient();
-        $crawlerPred = $clientPrep->request('POST', '/api/v1/tags', ['title' => 'Test_'.rand()]);
-        $resultRequest = $clientPrep->getResponse()->getContent();
-        $resultRequestJson = json_decode($resultRequest, true);
+        $tagId = $this->createTempTag();
         /**
          * Testing
          */
         $client = static::createClient();
-        $crawler = $client->request('DELETE', '/api/v1/tags/' . $resultRequestJson['id']);
+        $crawler = $client->request('DELETE', '/api/v1/tags/' . $tagId);
 
         $this->basicRulesTest($client, $crawler);
     }
