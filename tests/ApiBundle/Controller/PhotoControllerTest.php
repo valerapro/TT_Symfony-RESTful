@@ -85,7 +85,6 @@ class PhotoControllerTest extends WebTestCase
         ];
     }
 
-
     /**
      * Create photo in DB with tags
      *
@@ -204,14 +203,43 @@ class PhotoControllerTest extends WebTestCase
      */
     public function testDelPhoto()
     {
-        /**
-         * Generate temp tags.
-         * Separated by comma
-         */
-        $tags = $this->createTag() . ',' . $this->createTag();
-
+        $tags = $this->createTag() . ',' . $this->createTag(); //Generate temp tags.
         $tempImage = $this->preparingPhoto(); // Image with path
         $photoId = $this->createPhoto($tempImage, $tags); //Create photo
+        /**
+         * Delete PhotoTag
+         */
+        $tagsArr = explode(',', $tags);
+        foreach ($tagsArr as $value) {
+            $this->delPhotoTag($photoId, $value); // Delete PhotoTag
+            $this->delTag($value); //Del tags
+        }
+        /**
+         * Testing
+         */
+        $client = static::createClient();
+        $crawler = $client->request('DELETE', '/api/v1/photos/' . $photoId);
+
+        $this->basicRulesTest($client, $crawler);
+    }
+
+    /**
+     * GET /api/v1/photos/{id}
+     * Info: get photo by id
+     */
+    public function testGetPhotoBy()
+    {
+        $tags = $this->createTag() . ',' . $this->createTag(); // Generate temp tags.
+        $tempImage = $this->preparingPhoto(); // Image with path
+        $photoId = $this->createPhoto($tempImage, $tags); //Create photo
+
+        /**
+         * Testing
+         */
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/api/v1/photos/' . $photoId);
+
+        $this->basicRulesTest($client, $crawler);
 
         /**
          * Delete PhotoTag
@@ -221,14 +249,109 @@ class PhotoControllerTest extends WebTestCase
             $this->delPhotoTag($photoId, $value); // Delete PhotoTag
             $this->delTag($value); //Del tags
         }
+        /**
+         * Delete photo
+         */
+        $this->delPhoto($photoId);
+    }
+
+
+    /**
+     * GET /api/v1/photos/paginated/{limit}/{page}
+     * Info: get all photo with pagination
+     */
+    public function testPhotoPagination()
+    {
+        $tags = $this->createTag() . ',' . $this->createTag(); // Generate temp tags.
+        $tempImage = $this->preparingPhoto(); // Image with path
+        $photoId = $this->createPhoto($tempImage, $tags); //Create photo
 
         /**
          * Testing
          */
         $client = static::createClient();
-        $crawler = $client->request('DELETE', '/api/v1/photos/' . $photoId);
+        $crawler = $client->request('GET', '/api/v1/photos/paginated/2/1');
 
         $this->basicRulesTest($client, $crawler);
+
+        /**
+         * Delete PhotoTag
+         */
+        $tagsArr = explode(',', $tags);
+        foreach ($tagsArr as $value) {
+            $this->delPhotoTag($photoId, $value); // Delete PhotoTag
+            $this->delTag($value); //Del tags
+        }
+        /**
+         * Delete photo
+         */
+        $this->delPhoto($photoId);
+    }
+
+    /**
+     * POST /api/v1/photos/{photoId}/addtags
+     * Info: add tags for photo
+     */
+    public function testPhotosAddtags()
+    {
+        $tags = $this->createTag() . ',' . $this->createTag(); // Generate temp tags.
+        $tempImage = $this->preparingPhoto(); // Image with path
+        $photoId = $this->createPhoto($tempImage, $tags); //Create photo
+
+        $newTags = $this->createTag() . ',' . $this->createTag(); // Generate temp tags.
+        /**
+         * Testing
+         */
+        $client = static::createClient();
+        $crawler = $client->request('POST', '/api/v1/photos/' . $photoId . '/addtags', ['tags' => $newTags]);
+
+        $this->basicRulesTest($client, $crawler);
+
+        /**
+         * Delete PhotoTag
+         */
+        $allTags = $tags . ',' . $newTags;
+        $tagsArr = explode(',', $allTags);
+        foreach ($tagsArr as $value) {
+            $this->delPhotoTag($photoId, $value); // Delete PhotoTag
+            $this->delTag($value); //Del tags
+        }
+        /**
+         * Delete photo
+         */
+        $this->delPhoto($photoId);
+    }
+
+
+    /**
+     * DELETE /api/v1/photos/{photoId}/tags/{tagId}
+     * Info: delete tag from photo
+     */
+    public function testPhotosDeleteTags()
+    {
+        $tags = $this->createTag() . ',' . $this->createTag(); // Generate temp tags.
+        $tempImage = $this->preparingPhoto(); // Image with path
+        $photoId = $this->createPhoto($tempImage, $tags); //Create photo
+
+        /**
+         * Testing
+         */
+        $client = static::createClient();
+        $crawler = $client->request('DELETE', '/api/v1/photos/' . $photoId . '/tags/' . $tags);
+
+        $this->basicRulesTest($client, $crawler);
+        /**
+         * Delete PhotoTag
+         */
+        $tagsArr = explode(',', $tags);
+        foreach ($tagsArr as $value) {
+            $this->delPhotoTag($photoId, $value); // Delete PhotoTag
+            $this->delTag($value); //Del tags
+        }
+        /**
+         * Delete photo
+         */
+        $this->delPhoto($photoId);
     }
 
 
