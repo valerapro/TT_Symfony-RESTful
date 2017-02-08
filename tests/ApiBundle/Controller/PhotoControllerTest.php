@@ -56,8 +56,8 @@ class PhotoControllerTest extends WebTestCase
      */
     public function delTag($tagId)
     {
-        $clientPrep = static::createClient();
-        $clientPrep->request('DELETE', '/api/v1/tags/' . $tagId);
+        $clientDelTag = static::createClient();
+        $crawler = $clientDelTag->request('DELETE', '/api/v1/tags/' . $tagId);
     }
 
     /**
@@ -65,7 +65,8 @@ class PhotoControllerTest extends WebTestCase
      *
      * @return string
      */
-    public function createPhoto(){
+    public function preparingPhoto()
+    {
         $testImagePath = __DIR__ . '/../../../web/images/';
         $testImage = 'test.jpg';
         $testImageFullPath = $testImagePath . $testImage;
@@ -78,7 +79,62 @@ class PhotoControllerTest extends WebTestCase
         $newTestImage = $testImagePath . $newName;
         exec("cp $testImageFullPath $newTestImage");
 
-        return $newTestImage;
+        return [
+            'path' => $testImagePath,
+            'name' => $newName,
+        ];
+    }
+
+
+    /**
+     * Create photo in DB with tags
+     *
+     * @param $tempImage
+     * @param $tags
+     * @return integer
+     */
+    public function createPhoto($tempImage, $tags)
+    {
+
+        $photo = new UploadedFile(
+            $tempImage['path'] . $tempImage['name'],
+            $tempImage['name'],
+            'image/jpeg',
+            123
+        );
+        $client = static::createClient();
+        $crawler = $client->request('POST', '/api/v1/photos',
+            ['tags' => $tags],
+            ['file' => $photo]
+        );
+
+        $resultRequest = $client->getResponse()->getContent();
+        $resultRequestJson = json_decode($resultRequest, true);
+
+        return $resultRequestJson['id'];
+    }
+
+    /**
+     * Delete photo in DB and file on server
+     *
+     * @param $photoId
+     */
+    public function delPhoto($photoId)
+    {
+        $clientDelPhoto = static::createClient();
+        $clientDelPhoto->request('DELETE', '/api/v1/photos/' . $photoId);
+    }
+
+    /**
+     * Delete photo in DB and file on server
+     *
+     * @param $photoId int
+     * @param $tagId int
+     */
+    public function delPhotoTag($photoId, $tagId)
+    {
+        $clientPrep = static::createClient();
+        $clientPrep->request('DELETE', '/api/v1/photos/' . $photoId . '/tags/' . $tagId);
     }
 
     /**
@@ -107,32 +163,72 @@ class PhotoControllerTest extends WebTestCase
         /**
          * Image with path
          */
-        $newTestImage = $this->createPhoto();
+        $tempImage = $this->preparingPhoto();
         /**
          * Testing
          */
         $photo = new UploadedFile(
-            $newTestImage,
-            'test.jpg',
+            $tempImage['path'] . $tempImage['name'],
+            $tempImage['name'],
             'image/jpeg',
             123
         );
-
         $client = static::createClient();
         $crawler = $client->request('POST', '/api/v1/photos',
             ['tags' => $tags],
             ['file' => $photo]
         );
-
         $this->basicRulesTest($client, $crawler);
 
         /**
-         * Del tags
+         * Delete PhotoTag
+         */
+        $resultRequest = $client->getResponse()->getContent();
+        $resultRequestJson = json_decode($resultRequest, true);
+        $photoId = $resultRequestJson['id'];
+
+        $tagsArr = explode(',', $tags);
+        foreach ($tagsArr as $value) {
+            $this->delPhotoTag($photoId, $value); // Delete PhotoTag
+            $this->delTag($value); //Del tags
+        }
+        /**
+         * Delete photo
+         */
+        $this->delPhoto($photoId);
+    }
+
+    /**
+     * DELETE /api/v1/photos/{photoId}
+     * Info: delete photo
+     */
+    public function testDelPhoto()
+    {
+        /**
+         * Generate temp tags.
+         * Separated by comma
+         */
+        $tags = $this->createTag() . ',' . $this->createTag();
+
+        $tempImage = $this->preparingPhoto(); // Image with path
+        $photoId = $this->createPhoto($tempImage, $tags); //Create photo
+
+        /**
+         * Delete PhotoTag
          */
         $tagsArr = explode(',', $tags);
-        foreach ($tagsArr as $value){
-            $this->delTag($value);
+        foreach ($tagsArr as $value) {
+            $this->delPhotoTag($photoId, $value); // Delete PhotoTag
+            $this->delTag($value); //Del tags
         }
+
+        /**
+         * Testing
+         */
+        $client = static::createClient();
+        $crawler = $client->request('DELETE', '/api/v1/photos/' . $photoId);
+
+        $this->basicRulesTest($client, $crawler);
     }
 
 

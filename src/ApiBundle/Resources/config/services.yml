@@ -6,6 +6,7 @@ services:
     files_manager:
         class: ApiBundle\Service\FilesManager
         arguments: ["%upload_file_dir%"]
+#        arguments: ["%upload_file_path%"]
 
     tags_manager:
         class: ApiBundle\Service\TagsManager

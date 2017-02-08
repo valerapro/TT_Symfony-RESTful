@@ -8,7 +8,7 @@ imports:
 # http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: en
-    upload_file_dir: images
+    upload_file_dir: images/
     upload_file_path: '%kernel.root_dir%/../web/%upload_file_dir%'
 
 framework:

@@ -103,6 +103,7 @@ class PhotoController extends FOSRestController implements ClassResourceInterfac
                 $photo->setImage($fileName);
                 $em->persist($photo);
                 $em->flush();
+                $photoId = $photo->getId();
             } catch (\Exception $e) {
                 error_log($e->getMessage());
             }
@@ -120,7 +121,7 @@ class PhotoController extends FOSRestController implements ClassResourceInterfac
             'status' => $statusCode,
             'message' => $message,
             'photo' => $photo,
-            'id' => $photo->getId(),
+            'id' => $photoId,
         ], $statusCode);
     }
 
@@ -362,7 +363,9 @@ class PhotoController extends FOSRestController implements ClassResourceInterfac
             return $this->view([
                 'status' => Response::HTTP_NOT_FOUND,
                 'message' => 'Error! Delete file in server impossible.',
-                'fileName' => $fileName
+                'fileName' => $fileName,
+                'upload_file_dir' => $this->getParameter('upload_file_dir'),
+                'upload_file_path' => $this->getParameter('upload_file_path')
             ], Response::HTTP_NOT_FOUND);
         }
         /**
