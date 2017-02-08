@@ -5,6 +5,7 @@
 /web/images/*
 !/web/images/.gitkeep
 !/web/images/test.jpg
+/images/*
 
 #Default settings Symfony
 #---------------------------

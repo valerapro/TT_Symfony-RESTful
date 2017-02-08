@@ -9,14 +9,12 @@ class TagControllerTest extends WebTestCase
 {
 
     /**
-     * GET /api/v1/tags
-     * Info: get all tags
+     * Base rules for test methods
+     *
+     * @param $client
+     * @param $crawler
      */
-    public function testGetTags()
-    {
-        $client = static::createClient();
-        $crawler = $client->request('GET', '/api/v1/tags');
-
+    public function basicRulesTest($client, $crawler){
         // Assert that the response status code is 2xx
         $this->assertTrue($client->getResponse()->isSuccessful());
 
@@ -35,29 +33,27 @@ class TagControllerTest extends WebTestCase
     }
 
     /**
+     * GET /api/v1/tags
+     * Info: get all tags
+     */
+    public function testGetTags()
+    {
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/api/v1/tags');
+
+        $this->basicRulesTest($client, $crawler);
+    }
+
+    /**
      * POST /api/v1/tags
      * Info: add new tag
      */
     public function testPostTags()
     {
         $client = static::createClient();
-        $client->request('POST', '/api/v1/tags', ['title' => 'Test_'.rand()]);
+        $crawler = $client->request('POST', '/api/v1/tags', ['title' => 'Test_'.rand()]);
 
-        // Assert that the response status code is 2xx
-        $this->assertTrue($client->getResponse()->isSuccessful());
-
-        // Assert that the response status code is 200
-        $this->assertEquals(
-            Response::HTTP_OK,
-            $client->getResponse()->getStatusCode()
-        );
-        // Assert that the "Content-Type" header is "application/json"
-        $this->assertTrue(
-            $client->getResponse()->headers->contains(
-                'Content-Type',
-                'application/json'
-            )
-        );
+        $this->basicRulesTest($client, $crawler);
 
         /**
          * Delete new tag
@@ -88,21 +84,7 @@ class TagControllerTest extends WebTestCase
         $client = static::createClient();
         $crawler = $client->request('GET', '/api/v1/tags/' . $resultRequestJson['id']);
 
-        // Assert that the response status code is 2xx
-        $this->assertTrue($client->getResponse()->isSuccessful());
-
-        // Assert that the response status code is 200
-        $this->assertEquals(
-            Response::HTTP_OK,
-            $client->getResponse()->getStatusCode()
-        );
-        // Assert that the "Content-Type" header is "application/json"
-        $this->assertTrue(
-            $client->getResponse()->headers->contains(
-                'Content-Type',
-                'application/json'
-            )
-        );
+        $this->basicRulesTest($client, $crawler);
 
         /**
          * Delete new tag
@@ -127,24 +109,11 @@ class TagControllerTest extends WebTestCase
          * Testing
          */
         $client = static::createClient();
-        $url = '/api/v1/tags/' . $resultRequestJson['id'] . '/titles/NewTagName';
+        $url = '/api/v1/tags/' . $resultRequestJson['id'] . '/titles/' . 'Test_'.rand();
         $crawler = $client->request('PUT', $url);
 
-        // Assert that the response status code is 2xx
-        $this->assertTrue($client->getResponse()->isSuccessful());
+        $this->basicRulesTest($client, $crawler);
 
-        // Assert that the response status code is 200
-        $this->assertEquals(
-            Response::HTTP_OK,
-            $client->getResponse()->getStatusCode()
-        );
-        // Assert that the "Content-Type" header is "application/json"
-        $this->assertTrue(
-            $client->getResponse()->headers->contains(
-                'Content-Type',
-                'application/json'
-            )
-        );
         /**
          * Delete temp tag
          */
@@ -170,21 +139,7 @@ class TagControllerTest extends WebTestCase
         $client = static::createClient();
         $crawler = $client->request('GET', '/api/v1/tags/' . $resultRequestJson['id'] . '/photos');
 
-        // Assert that the response status code is 2xx
-        $this->assertTrue($client->getResponse()->isSuccessful());
-
-        // Assert that the response status code is 200
-        $this->assertEquals(
-            Response::HTTP_OK,
-            $client->getResponse()->getStatusCode()
-        );
-        // Assert that the "Content-Type" header is "application/json"
-        $this->assertTrue(
-            $client->getResponse()->headers->contains(
-                'Content-Type',
-                'application/json'
-            )
-        );
+        $this->basicRulesTest($client, $crawler);
         /**
          * Delete temp tag
          */
@@ -210,21 +165,7 @@ class TagControllerTest extends WebTestCase
         $client = static::createClient();
         $crawler = $client->request('DELETE', '/api/v1/tags/' . $resultRequestJson['id']);
 
-        // Assert that the response status code is 2xx
-        $this->assertTrue($client->getResponse()->isSuccessful());
-
-        // Assert that the response status code is 200
-        $this->assertEquals(
-            Response::HTTP_OK,
-            $client->getResponse()->getStatusCode()
-        );
-        // Assert that the "Content-Type" header is "application/json"
-        $this->assertTrue(
-            $client->getResponse()->headers->contains(
-                'Content-Type',
-                'application/json'
-            )
-        );
+        $this->basicRulesTest($client, $crawler);
     }
 
 }
