@@ -1,25 +1,22 @@
 RESTful service on Symfony 3.2
 =========
 
-Deployment:
+<h4>Technical specification.</h4>
  
- - Run composer.
- 
- $ composer install 
- 
- - Config permition for cache.
- 
- http://symfony.com/doc/current/setup/file_permissions.html 
- 
- - Clear cache
- 
- $ php bin/console cache:clear 
- 
- - Run migrations.
- 
- $ php bin/console doc:mig:mig
- 
- - Testing API methods
+Need to implement REST API service on Symfony3
+
+The functionality of the service:
+- Uploading photos with the ability to attach tags;
+- Adding tags to photos;
+- Removal of tags;
+- Delete photo;
+- Display the photos list with pagnac;
+- Search photos by tags.
+
+It would be a plus coverage, code documentation (api methods). From databases you can use mongoDB, MySQL, PostgreSQL.
+
+
+<h4>Testing API methods</h4>
  
  $ phpunit tests/ApiBundle/Controller/TagControllerTest.php
  
